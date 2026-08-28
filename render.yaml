@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: oilerp-api
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @oil-erp/database db:generate && pnpm --filter @oil-erp/api build
+    startCommand: pnpm --filter @oil-erp/api start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+
+  - type: web
+    name: oilerp-web
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter web build
+    startCommand: pnpm --filter web start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      # Set this to the public URL of oilerp-api after its first deploy.
+      - key: API_URL
+        sync: false

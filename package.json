@@ -1,0 +1,26 @@
+{
+  "name": "oil-erp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OilERP — Enterprise Resource Planning & Manufacturing Management System",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "dev:web": "pnpm --filter web dev",
+    "desktop": "cmd /c launch-desktop-app.bat",
+    "build:web": "pnpm --filter web build",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "prettier": "^3.2.0"
+  },
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
