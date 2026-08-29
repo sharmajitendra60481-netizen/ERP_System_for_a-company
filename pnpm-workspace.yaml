@@ -2,4 +2,13 @@ packages:
   - 'apps/*'
   - 'packages/*'
 allowBuilds:
-  unrs-resolver: set this to true or false
+  # Required by the web/API services deployed on Render.
+  '@nestjs/core': true
+  '@prisma/client': true
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  unrs-resolver: true
+  # Desktop/native performance helpers are not used by the hosted services.
+  electron: false
+  msgpackr-extract: false
