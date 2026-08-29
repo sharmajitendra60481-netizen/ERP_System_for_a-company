@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   LayoutDashboard, Users, ShoppingCart, Package, Warehouse, Factory, ShieldCheck,
   Truck, DollarSign, UserCheck, CreditCard, Wrench, Settings, FileText, Bell, BarChart3,
@@ -128,7 +129,7 @@ export default function Sidebar({ collapsed, onToggle, allowedModules }: Sidebar
           className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
           style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
         >
-          <Droplets className="w-5 h-5 text-white" />
+          <Image src="/oilerp-mark.svg" alt="OilERP" width={36} height={36} priority />
         </div>
         {!collapsed && (
           <div className="ml-3 overflow-hidden">

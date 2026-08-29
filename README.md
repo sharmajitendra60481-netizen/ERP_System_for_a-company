@@ -40,7 +40,11 @@ pnpm dev:web
 
 Open [http://localhost:3000](http://localhost:3000)
 
-### Mock login credentials (Phase 1)
+### Setup with Render (Production)
+
+Ready to deploy? See [RENDER_SETUP.md](RENDER_SETUP.md) for complete deployment instructions.
+
+### Mock login credentials
 
 | Role | Email | Password |
 |---|---|---|

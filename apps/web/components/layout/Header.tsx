@@ -1,10 +1,11 @@
 'use client'
 
-import { Bell, Search, LogOut } from "lucide-react"
+import { Bell, Search, LogOut, User } from "lucide-react"
 import { useAuthStore } from "@/stores/authStore"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 export function Header() {
   const { user, logout } = useAuthStore()
@@ -64,6 +65,15 @@ export function Header() {
                   <p className="text-sm font-medium text-slate-900">{user?.name}</p>
                   <p className="text-xs text-slate-500 mt-0.5 truncate">{user?.email}</p>
                 </div>
+                
+                <Link 
+                  href="/profile"
+                  onClick={() => setShowUserMenu(false)}
+                  className="w-full px-4 py-2 text-sm text-left text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  View Profile
+                </Link>
                 
                 <button 
                   onClick={handleLogout}

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Delete, Body, HttpCode, HttpStatus, UseGuards, Req, Param, ForbiddenException } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Patch, Body, HttpCode, HttpStatus, UseGuards, Req, Param, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -35,5 +35,17 @@ export class AuthController {
       throw new ForbiddenException('You cannot delete your own account');
     }
     return this.authService.deleteUser(req.user.companyId, id);
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(@Req() req: any, @Body() body: any) {
+    return this.authService.updateProfile(req.user.id, body);
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(@Req() req: any, @Body() body: any) {
+    return this.authService.changePassword(req.user.id, body);
   }
 }

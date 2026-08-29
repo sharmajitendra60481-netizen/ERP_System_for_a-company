@@ -1,7 +1,19 @@
-const { app, BrowserWindow, Menu, shell, Tray } = require('electron')
+const { app, BrowserWindow, Menu, shell } = require('electron')
 const path = require('path')
 
 let mainWindow
+const portalUrl = process.env.PORTAL_URL || 'http://localhost:3000'
+
+function showPortalUnavailable() {
+  const safeUrl = portalUrl.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(`
+    <main style="font-family:Segoe UI,Arial,sans-serif;max-width:680px;margin:12vh auto;padding:32px;color:#172033">
+      <h1>OilERP portal is not running</h1>
+      <p>The desktop shell is ready, but it cannot reach the ERP portal at <strong>${safeUrl}</strong>.</p>
+      <ol><li>Start the ERP services with <code>pnpm dev</code>.</li><li>Wait for the web portal on port 3000.</li><li>Click Retry below.</li></ol>
+      <button onclick="location.href='${safeUrl}'" style="padding:10px 16px;border:0;border-radius:6px;background:#0f766e;color:white;font-weight:600;cursor:pointer">Retry connection</button>
+    </main>`)} `)
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -9,8 +21,7 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 700,
-    title: 'OilERP — Edible Oil Enterprise Desktop Portal',
-    icon: path.join(__dirname, 'icon.png'),
+    title: 'OilERP — Industrial Manufacturing ERP',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -18,12 +29,10 @@ function createWindow() {
     autoHideMenuBar: false,
   })
 
-  // Load local Next.js Web Portal
-  const portalUrl = process.env.PORTAL_URL || 'http://localhost:3000'
-  
-  mainWindow.loadURL(portalUrl).catch(() => {
-    // Retry loading if dev server is warming up
-    setTimeout(() => mainWindow.loadURL(portalUrl), 3000)
+  // Load the local portal or a deployed portal supplied with PORTAL_URL.
+  mainWindow.loadURL(portalUrl).catch(showPortalUnavailable)
+  mainWindow.webContents.on('did-fail-load', (_event, _code, _description, validatedUrl, isMainFrame) => {
+    if (isMainFrame && validatedUrl === portalUrl) showPortalUnavailable()
   })
 
   // Open external links in default OS browser
@@ -40,7 +49,7 @@ function createWindow() {
     {
       label: 'OilERP',
       submenu: [
-        { label: 'Reload Portal', accelerator: 'CmdOrCtrl+R', click: () => mainWindow.reload() },
+        { label: 'Reload Portal', accelerator: 'CmdOrCtrl+R', click: () => mainWindow.loadURL(portalUrl).catch(showPortalUnavailable) },
         { label: 'Toggle Full Screen', accelerator: 'F11', click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()) },
         { type: 'separator' },
         { label: 'Exit Desktop App', role: 'quit' },
@@ -62,14 +71,14 @@ function createWindow() {
       label: 'Help',
       submenu: [
         {
-          label: 'About Apex Edible Oils ERP',
+          label: 'About OilERP',
           click: () => {
             const { dialog } = require('electron')
             dialog.showMessageBox(mainWindow, {
               type: 'info',
-              title: 'About OilERP Desktop',
-              message: 'OilERP — Enterprise Management System',
-              detail: 'Version 1.0.0 Desktop Client\nBuilt for Apex Edible Oils & Foods Pvt Ltd\nSupabase PostgreSQL Connected',
+              title: 'About OilERP',
+              message: 'OilERP — Industrial Manufacturing ERP',
+              detail: 'Version 1.0.0 Desktop Client\nBuilt for manufacturing operations\nPostgreSQL connected',
             })
           },
         },

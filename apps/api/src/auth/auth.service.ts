@@ -73,4 +73,42 @@ export class AuthService {
       select: { id: true, email: true, firstName: true, lastName: true, role: true, isActive: true, createdAt: true },
     });
   }
+
+  async updateProfile(userId: string, data: { firstName?: string; lastName?: string }) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: data.firstName?.trim() || user.firstName,
+        lastName: data.lastName?.trim() || user.lastName,
+      },
+      select: { id: true, email: true, firstName: true, lastName: true, role: true, isActive: true, companyId: true },
+    });
+  }
+
+  async changePassword(userId: string, data: { currentPassword: string; newPassword: string }) {
+    if (!data.currentPassword || !data.newPassword) {
+      throw new BadRequestException('Current and new passwords are required');
+    }
+
+    if (data.newPassword.length < 8) {
+      throw new BadRequestException('New password must be at least 8 characters');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const isMatch = await bcrypt.compare(data.currentPassword, user.passwordHash);
+    if (!isMatch) throw new UnauthorizedException('Current password is incorrect');
+
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hashedPassword },
+    });
+
+    return { message: 'Password changed successfully' };
+  }
 }
